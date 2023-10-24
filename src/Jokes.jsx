@@ -110,7 +110,22 @@ function Jokes() {
               ) : (
                 <div className="card-body mobile">
                   {query.length > 0 ? (
-                    <h1>Total Jokes- {query.length}</h1>
+                    <>
+                      <div className="clear">
+                        <h1>Total Jokes- {query.length}</h1>
+                        <button
+                          type="button"
+                          className="btn btn-outline-success mb-2"
+                          onClick={() => {
+                            setSelected("");
+                            setSearch("");
+                            setQuery([]);
+                          }}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    </>
                   ) : (
                     <></>
                   )}

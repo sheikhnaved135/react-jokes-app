@@ -35,6 +35,10 @@ input {
   justify-content: center;
   align-items: center;
 }
+.clear {
+  display: flex;
+  justify-content: space-around;
+}
 @media screen and (max-width: 500px) {
   /* body {
     background-color: yellow;
