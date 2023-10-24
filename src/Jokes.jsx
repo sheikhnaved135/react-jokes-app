@@ -97,7 +97,7 @@ function Jokes() {
               Search
             </button>
           </form>
-          <h1>You Searched {selected || search}</h1>
+          {selected || search ? <h1>You Searched {selected || search}</h1> : ""}
           {selected || search ? (
             <>
               <h4>Joke:-</h4>
