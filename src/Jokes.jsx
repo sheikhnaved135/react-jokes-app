@@ -1,43 +1,71 @@
 import React, { useCallback, useEffect, useState } from "react";
+import Loader from "react-top-loading-bar";
 function Jokes() {
   const [categories, setCategories] = useState([]);
   const [selected, setSelected] = useState("");
+  const [progress, setProgress] = useState(0);
   const [res, setres] = useState({});
-  const [loading, setLoading] = useState(false);
+
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState([]);
-  useEffect(() => {
-    setLoading(true);
-    fetch("https://api.chucknorris.io/jokes/categories")
-      .then((res) => res.json())
-      .then((data) => setCategories(data));
-    setLoading(false);
-  }, []);
-  useEffect(() => {
-    fetch(`https://api.chucknorris.io/jokes/random?category=${selected}`)
-      .then((res) => res.json())
-      .then((data) => setres(data));
-  }, [selected, setSelected]);
-  const fetchApi = () => {
-    fetch("https://api.chucknorris.io/jokes/random")
-      .then((res) => res.json())
-      .then((data) => setres(data));
+  const getData = async () => {
+    setProgress(10);
+    const res = await fetch("https://api.chucknorris.io/jokes/categories");
+    setProgress(50);
+    const data = await res.json();
+    setCategories(data);
+    {
+      console.log(categories);
+    }
+    setProgress(100);
   };
-  const onSearch = (e) => {
+  useEffect(() => {
+    getData();
+    fetchRes();
+    onSearch();
+  }, [selected, setSelected]);
+  const fetchRes = async () => {
+    setProgress(10);
+    const res = await fetch(
+      `https://api.chucknorris.io/jokes/random?category=${selected}`
+    );
+    setProgress(50);
+    const data = await res.json();
+    setProgress(100);
+    setres(data);
+  };
+  const fetchApi = async () => {
+    setProgress(30);
+    const res = await fetch("https://api.chucknorris.io/jokes/random");
+    setProgress(70);
+    const data = await res.json();
+    setProgress(100);
+    setres(data);
+  };
+  const onSearch = async (e) => {
     e.preventDefault();
-    fetch(`https://api.chucknorris.io/jokes/search?query=${search}`)
-      .then((res) => res.json())
-      .then((data) => setQuery(data?.result));
+    setProgress(10);
+    const res = await fetch(
+      `https://api.chucknorris.io/jokes/search?query=${search}`
+    );
+    setProgress(40);
+    const data = await res.json();
+    setProgress(70);
+    setQuery(data?.result);
+    setProgress(100);
   };
   {
     console.log(`category = ${query}`);
   }
   return (
     <>
+      <Loader progress={progress} />
       <div className="container">
         <div className="data">
-          {categories.map((item, id) => (
+          {categories?.map((item, id) => (
             <button
+              type="button"
+              className="btn btn-outline-success"
               key={id}
               onClick={() => {
                 setSelected(item);
@@ -61,45 +89,75 @@ function Jokes() {
                 setSelected("");
               }}
             />
+            <button
+              type="button"
+              className="btn btn-outline-success"
+              onClick={onSearch}
+            >
+              Search
+            </button>
           </form>
-          <h1>You Selected {selected || search}</h1>
+          <h1>You Searched {selected || search}</h1>
           {selected || search ? (
             <>
               <h4>Joke:-</h4>
               {!search ? (
                 <>
-                  <h1>{res.value}</h1>
+                  <div className="card bg-dark mb-3">
+                    <div className="card-body">{res.value}</div>
+                  </div>
                 </>
               ) : (
-                <>
-                  <h1> total results are - {query.length}</h1>
-                  {query.map((e) => (
-                    <>
-                      <ul>
-                        <li>{e.value}</li>
-                      </ul>
-                    </>
-                  ))}
-                </>
+                <div className="card-body mobile">
+                  {query.length > 0 ? (
+                    <h1>Total Jokes- {query.length}</h1>
+                  ) : (
+                    <></>
+                  )}
+                  {query.length > 0 ? (
+                    query.map((e) => (
+                      <>
+                        <div className="card bg-dark mb-3">
+                          <div className="card-body">{e.value}</div>
+                        </div>
+                      </>
+                    ))
+                  ) : (
+                    <h3>Press enter to search</h3>
+                  )}
+                </div>
               )}
             </>
           ) : (
-            "You have not selected anything"
+            "Search or Select something"
           )}
           <div className="center1">
-            <button
-              type="reset"
-              onClick={() => {
-                setSelected("");
-                setSearch("");
-                setQuery([]);
-              }}
-            >
-              reset
-            </button>
+            {selected || search ? (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-outline-success"
+                  onClick={() => {
+                    setSelected("");
+                    setSearch("");
+                    setQuery([]);
+                  }}
+                >
+                  Clear
+                </button>
+              </>
+            ) : (
+              <></>
+            )}
             {selected ? (
               <>
-                <button onClick={fetchApi}>newJoke</button>
+                <button
+                  type="button"
+                  className="btn btn-outline-success"
+                  onClick={fetchApi}
+                >
+                  Next
+                </button>
               </>
             ) : (
               <></>
