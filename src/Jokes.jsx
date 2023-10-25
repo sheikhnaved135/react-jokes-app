@@ -5,7 +5,7 @@ function Jokes() {
   const [selected, setSelected] = useState("");
   const [progress, setProgress] = useState(0);
   const [res, setres] = useState({});
-
+  const [check, setCheck] = useState(false);
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState([]);
   const getData = async () => {
@@ -53,6 +53,7 @@ function Jokes() {
     setProgress(70);
     setQuery(data?.result);
     setProgress(100);
+    setCheck(true);
   };
   {
     console.log(`category = ${query}`);
@@ -76,6 +77,7 @@ function Jokes() {
             </button>
           ))}
         </div>
+        {console.log(`check ${check}`)}
         <div className="center">
           <form className="search" onSubmit={onSearch}>
             <input
@@ -109,7 +111,7 @@ function Jokes() {
                 </>
               ) : (
                 <div className="card-body mobile">
-                  {query.length > 0 ? (
+                  {search && query?.length > 0 ? (
                     <>
                       <div className="clear">
                         <h1>Total Jokes- {query.length}</h1>
@@ -129,7 +131,7 @@ function Jokes() {
                   ) : (
                     <></>
                   )}
-                  {query.length > 0 ? (
+                  {query?.length > 0 ? (
                     query.map((e) => (
                       <>
                         <div className="card bg-dark mb-3">
@@ -138,7 +140,7 @@ function Jokes() {
                       </>
                     ))
                   ) : (
-                    <h3>Press enter to search</h3>
+                    <h3>Press Enter To Search</h3>
                   )}
                 </div>
               )}
